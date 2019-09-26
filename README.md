@@ -2,6 +2,7 @@
 
 These instructions will get you a copy of CEBI-miner up and running on your local machine ready for application.
 Please download and extract the zip file for this repository on your computer.
+If you do not have a zip extraction application installed, please download WinRAR from here: https://www.win-rar.com/postdownload.html
 -----------------------------------------------------------
 ### Step 1)
 
