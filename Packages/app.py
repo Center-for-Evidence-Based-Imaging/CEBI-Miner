@@ -813,6 +813,7 @@ def update_results(n_clicks, column, index, scope, keywords, index_val, reportsA
 						new_columns = np.concatenate((['TERM_Counts'], df.columns))
 			try:
 				result = pd.DataFrame(Search(df.columns.get_loc(column), keywords, df.values[:], neg, neg_words, neg_dir, neg_units, neg_dis, assoc, assoc_words, assoc_dir, assoc_units, assoc_dis, keyword_sentences_column), columns=new_columns)
+				result = result.replace("empty row", "")
 			except Exception as err:
 				global error_triggered
 				error_triggered = 'True'
@@ -1040,6 +1041,9 @@ def get_scope(column, scope, reportsArr):
 							StartIndex = r.lower().index("\n" + s.lower() + ":")
 						elif "\n" + s.lower() + " :" in r.lower():
 							StartIndex = r.lower().index("\n" + s.lower() + " :")
+							
+						if StartIndex < 0 or StartIndex > len(r):
+							StartIndex = 0
 
 					else:
 						if "\n" + s.lower() + "\n" in r.lower():
@@ -1055,8 +1059,8 @@ def get_scope(column, scope, reportsArr):
 					elif s.lower() == "report" and "\nimpression:" in r.lower():
 						EndIndex = r.lower().index("\nimpression:")
 
-					elif s.lower() == "impression" and "\nend of impression:" in r.lower():
-						EndIndex = r.lower().index("\nend of impression:")
+					elif s.lower() == "impression" and "\nend of impression" in r.lower():
+						EndIndex = r.lower().index("\nend of impression")
 						
 					#elif s.lower() == "impression" and "\ncritical results were communicated" in r.lower():
 						#EndIndex = r.lower().index("\ncritical results were communicated")
@@ -1064,8 +1068,11 @@ def get_scope(column, scope, reportsArr):
 					#elif s.lower() == "impression" and "\ni, the teaching physician" in r.lower():
 						#EndIndex = r.lower().index("\ni, the teaching physician")
 					
-					elif s.lower() == "impression" and "\napproved by attending:" in r.lower():
-						EndIndex = r.lower().index("\napproved by attending:")
+					elif s.lower() == "impression" and "\napproved by attending" in r.lower():
+						EndIndex = r.lower().index("\napproved by attending")
+						
+					if EndIndex < 0 or EndIndex > len(r):
+						EndIndex = -1
 
 			filtered.append([r[StartIndex:EndIndex]])
 
