@@ -519,7 +519,7 @@ def parse_contents(contents, filename):
 		if '.csv' in filename:
 			# Assume that the user uploaded a CSV file
 			df = pd.read_csv(
-				io.StringIO(decoded.decode('utf-8')))
+				io.StringIO(decoded.decode('utf-8')), encoding='utf-8')
 		elif '.xls' in filename:
 			# Assume that the user uploaded an excel file
 
@@ -529,6 +529,8 @@ def parse_contents(contents, filename):
 				df = df["Sheet1"]
 			else:
 				df = df[next(iter(df))]
+				
+		#df = df.replace("empty row", "")
 
 	except Exception as e:
 		print(e)
@@ -1041,6 +1043,14 @@ def get_scope(column, scope, reportsArr):
 							StartIndex = r.lower().index("\n" + s.lower() + ":")
 						elif "\n" + s.lower() + " :" in r.lower():
 							StartIndex = r.lower().index("\n" + s.lower() + " :")
+						elif s + ":" in r:
+							StartIndex = r.index(s + ":")
+						elif s + " :" in r:
+							StartIndex = r.index(s + " :")
+						elif s.lower() + ":" in r.lower():
+							StartIndex = r.lower().index(s.lower() + ":")
+						elif s.lower() + " :" in r.lower():
+							StartIndex = r.lower().index(s.lower() + " :")
 							
 						if StartIndex < 0 or StartIndex > len(r):
 							StartIndex = 0
@@ -1070,6 +1080,27 @@ def get_scope(column, scope, reportsArr):
 					
 					elif s.lower() == "impression" and "\napproved by attending" in r.lower():
 						EndIndex = r.lower().index("\napproved by attending")
+						
+					elif s.lower() == "patient information" and " exam information" in r.lower():
+						EndIndex = r.lower().index(" exam information")
+
+					elif s.lower() == "exam information" and " result information" in r.lower():
+						EndIndex = r.lower().index(" result information\n")
+
+					elif s.lower() == "report" and " impression:" in r.lower():
+						EndIndex = r.lower().index(" impression:")
+
+					elif s.lower() == "impression" and " end of impression" in r.lower():
+						EndIndex = r.lower().index(" end of impression")
+						
+					#elif s.lower() == "impression" and "\ncritical results were communicated" in r.lower():
+						#EndIndex = r.lower().index("\ncritical results were communicated")
+						
+					#elif s.lower() == "impression" and "\ni, the teaching physician" in r.lower():
+						#EndIndex = r.lower().index("\ni, the teaching physician")
+					
+					elif s.lower() == "impression" and " approved by attending" in r.lower():
+						EndIndex = r.lower().index(" approved by attending")
 						
 					if EndIndex < 0 or EndIndex > len(r):
 						EndIndex = -1
